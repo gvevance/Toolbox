@@ -14,7 +14,6 @@ import os
 from PIL import Image
 from PIL import UnidentifiedImageError
 
-# file_name, file_extension = os.path.splitext("/Users/pankaj/abc.txt")
 def main():
     
     if len(sys.argv) != 3 :
@@ -42,20 +41,21 @@ def main():
 
     try :
         img = Image.open(FILE).rotate(180)
-        # img.show()
+
     except UnidentifiedImageError :
         print("Invalid image file entered. Exiting.")
         exit()
     
+    except Exception as err:
+        print(f"{type(err).__name__} was raised: {err}")
+        exit()
+
     file_stat = os.stat(FILE)
     print("Current file size is : ",file_stat.st_size>>10,"kB")
 
     _filename, _file_extension = os.path.splitext(FILE)
     NEW_FILE = _filename + "_min.JPG"
     img.save(NEW_FILE,format="JPEG",optimize=True,quality=COMPRESS_BY)
-
-    # img_min = Image.open(NEW_FILE).rotate(180)
-    # # img_min.show()
 
     file_stat = os.stat(NEW_FILE)
     print("Compressed file size is : ",file_stat.st_size>>10,"kB")
