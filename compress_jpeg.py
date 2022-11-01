@@ -5,13 +5,14 @@
 2. Take argument from script - sys.argv
 3. Quality of compression (size afterwards)
 4. Display size of resultant image
-5. Compressed image is saved to a directory under the script location not where the image is at
+5. Compressed image is saved to the directory where the image is at
+6. Check whether format is correct
 '''
-from pickletools import optimize
-from statistics import quantiles
+
 import sys
 import os
 from PIL import Image
+from PIL import UnidentifiedImageError
 
 def main():
     
@@ -38,17 +39,22 @@ def main():
         print(e)
         exit()
 
+    try :
+        img = Image.open(FILE).rotate(180)
+        # img.show()
+    except UnidentifiedImageError :
+        print("Invalid image file entered. Exiting.")
+        exit()
+    
     file_stat = os.stat(FILE)
     print("Current file size is : ",file_stat.st_size>>10,"kB")
     
-    img = Image.open(FILE).rotate(180)
-    img.show()
 
     NEW_FILE = FILE.split('.JPG')[0]+'_min.JPG'
     img.save(NEW_FILE,"JPEG",optimize=True,quality=COMPRESS_BY)
 
-    img_min = Image.open(NEW_FILE).rotate(180)
-    img_min.show()
+    # img_min = Image.open(NEW_FILE).rotate(180)
+    # # img_min.show()
 
     file_stat = os.stat(NEW_FILE)
     print("Compressed file size is : ",file_stat.st_size>>10,"kB")
