@@ -52,7 +52,7 @@ def main():
 
     _filename, _file_extension = os.path.splitext(FILE)
     NEW_FILE = _filename + "_min.JPG"
-    img.save(NEW_FILE,"JPEG",optimize=True,quality=COMPRESS_BY)
+    img.save(NEW_FILE,format="JPEG",optimize=True,quality=COMPRESS_BY)
 
     # img_min = Image.open(NEW_FILE).rotate(180)
     # # img_min.show()
