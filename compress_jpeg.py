@@ -26,9 +26,9 @@ def main():
         exit()
 
     try :
-        COMPRESS_BY = int(sys.argv[2])
-        if COMPRESS_BY < 1 :
-            print("ERROR : Cannot compress by more than 10%.")
+        COMPRESS_TO = int(sys.argv[2])
+        if COMPRESS_TO < 1 :
+            print("ERROR : Cannot compress by more than 1%.")
             exit()
     
     except ValueError :
@@ -53,9 +53,9 @@ def main():
     file_stat = os.stat(FILE)
     print("Current file size is : ",file_stat.st_size>>10,"kB")
 
-    _filename, _file_extension = os.path.splitext(FILE)
+    _filename, _ = os.path.splitext(FILE)
     NEW_FILE = _filename + "_min.JPG"
-    img.save(NEW_FILE,format="JPEG",optimize=True,quality=COMPRESS_BY)
+    img.save(NEW_FILE,format="JPEG",optimize=True,quality=COMPRESS_TO)
 
     file_stat = os.stat(NEW_FILE)
     print("Compressed file size is : ",file_stat.st_size>>10,"kB")
