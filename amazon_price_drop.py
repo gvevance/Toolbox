@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 import json
 from time import sleep
 from random import choice
-import time
+from time import time
 # import sys
 
 
@@ -28,9 +28,9 @@ user_agent_list = [
 
 def check_price(link) :
 
-    timeout = time.time() + 60
+    timeout = time() + 60
     
-    while (time.time() < timeout) :
+    while (time() < timeout) :
         try :
         
             with requests.session() as session :
