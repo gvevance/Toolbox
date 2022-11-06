@@ -9,12 +9,16 @@ ECHO_DOT_LINK = "https://www.amazon.in/Echo-Dot-4th-Gen-Blue/dp/B084KSRFXJ/ref=s
 HDMI_LINK = "https://www.amazon.in/LAPSTER-Switch-Splitter-Bi-Directional-Supports/dp/B08W579B4F/?_encoding=UTF8&pd_rd_w=YwDrI&content-id=amzn1.sym.1f592895-6b7a-4b03-9d72-1a40ea8fbeca&pf_rd_p=1f592895-6b7a-4b03-9d72-1a40ea8fbeca&pf_rd_r=WVBVM5FYWQ0KP55T7RJ6&pd_rd_wg=wcYPP&pd_rd_r=fcf3daf2-8a78-4747-a2da-329e08d38fea&ref_=pd_gw_ci_mcx_mr_hp_atf_m"
 HDMI_CABLE_LINK = "https://www.amazon.in/AmazonBasics-High-Speed-HDMI-Cable-Feet/dp/B014I8SIJY/ref=sr_1_4?crid=1TCQ42WFB4ZJE&keywords=hdmi+cable&qid=1667622294&qu=eyJxc2MiOiI1LjExIiwicXNhIjoiNC41NiIsInFzcCI6IjQuMzQifQ%3D%3D&s=computers&sprefix=hdmi+cabl%2Ccomputers%2C239&sr=1-4"
 
+link_targets_file = "filename.csv"
+
 import requests
 from bs4 import BeautifulSoup
 import json
 from time import sleep
 from random import choice
 from time import time
+import os
+import csv
 # import sys
 
 
@@ -28,34 +32,40 @@ user_agent_list = [
 
 def check_price(link) :
 
-    timeout = time() + 60
+    timeout = time() + 60       # try for 60 seconds and exit
     
-    while (time() < timeout) :
-        try :
+    while (True) :
+
+        if time() < timeout :
+            try :
+            
+                with requests.session() as session :
+
+                    usr_agent = choice(user_agent_list)
+                    # print(usr_agent)
+                    session.headers['user-agent'] = usr_agent
+                    res = session.get(link)
+                    soup_data = BeautifulSoup(res.text, 'html.parser')
+
+                    # get the tag that has the price
+                    tag = soup_data.find(class_="a-section aok-hidden twister-plus-buying-options-price-data")
+                    
+                    # convert string to dictionary (json)
+                    details_dict = json.loads(tag.string[1:-1])      
+                    
+                    price = float(details_dict["priceAmount"])
+                    currency = details_dict["currencySymbol"]
+                    display_price = details_dict["displayPrice"]
+
+                    return price, currency, display_price
+
+            except AttributeError :
+                # print("Connection unsuccessful. Retrying")
+                sleep(0.1)
         
-            with requests.session() as session :
-
-                usr_agent = choice(user_agent_list)
-                # print(usr_agent)
-                session.headers['user-agent'] = usr_agent
-                res = session.get(link)
-                soup_data = BeautifulSoup(res.text, 'html.parser')
-
-                # get the tag that has the price
-                tag = soup_data.find(class_="a-section aok-hidden twister-plus-buying-options-price-data")
-                
-                # convert string to dictionary (json)
-                details_dict = json.loads(tag.string[1:-1])      
-                
-                price = float(details_dict["priceAmount"])
-                currency = details_dict["currencySymbol"]
-                display_price = details_dict["displayPrice"]
-
-                return price, currency, display_price
-
-        except AttributeError :
-            # print("Connection unsuccessful. Retrying")
-            sleep(0.1)
+        else :
+            print("Request timed out.")
+            exit()
 
 
 def price_alert(price,target) :
@@ -66,12 +76,23 @@ def price_alert(price,target) :
 
 def main() :
 
-    price,currency,display_price = check_price(ECHO_DOT_LINK)
-    buy = price_alert(price,target=20)
-    if buy :
-        print(f"Price is {display_price}. Buy now.")
-    else :
-        print(f"Price is {display_price}. Look for a better deal.")
+    if not os.path.exists(link_targets_file) :
+        print(f"Error. {link_targets_file} does not exist.")
+        exit()
+    
+    with open(link_targets_file) as file :
+        csvreader = csv.reader(file)
+        for row in csvreader :
+            title = row[0]
+            link = row[1]
+            target = float(row[2])
+
+            price,currency,display_price = check_price(link)
+            buy = price_alert(price,target=target)
+            if buy :
+                print(f"Price of {title} is {display_price}. Buy now.")
+            else :
+                print(f"Price of {title} is {display_price}. Look for a better deal.")
 
 
 if __name__ == "__main__" :
