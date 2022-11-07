@@ -3,7 +3,7 @@
 # Automate calling this script and send email to xyz to alert.
 # Can log it in a csv file
 
-link_targets_file = "filename.csv"
+link_targets_file = "filename_2.csv"
 
 import requests
 from bs4 import BeautifulSoup
@@ -42,15 +42,13 @@ def check_price(link) :
                     soup_data = BeautifulSoup(res.text, 'html.parser')
 
                     # get the tag that has the price
-                    tag = soup_data.find(class_="a-section aok-hidden twister-plus-buying-options-price-data")
-                    
-                    # convert string to dictionary (json)
-                    details_dict = json.loads(tag.string[1:-1])      
-                    
-                    price = float(details_dict["priceAmount"])
-                    currency = details_dict["currencySymbol"]
-                    display_price = details_dict["displayPrice"]
+                    tag = soup_data.find(class_="_30jeq3 _16Jk6d")
 
+                    price = float(tag.string.replace(",","")[1:])
+                    currency = tag.string[0]
+                    display_price = tag.string
+                    
+                    # price,currency,display_price = 0,0,0
                     return price, currency, display_price
 
             except AttributeError :
