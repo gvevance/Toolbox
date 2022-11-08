@@ -35,9 +35,8 @@ def check_price(link) :
             
                 with requests.session() as session :
 
-                    usr_agent = choice(user_agent_list)
-                    # print(usr_agent)
-                    session.headers['user-agent'] = usr_agent
+                    user_agent = choice(user_agent_list)
+                    session.headers['user-agent'] = user_agent
                     res = session.get(link)
                     soup_data = BeautifulSoup(res.text, 'html.parser')
 
