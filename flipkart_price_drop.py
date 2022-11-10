@@ -35,7 +35,7 @@ def check_price(link) :
                 with requests.session() as session :
 
                     # choose a randome user agent from the list of user agents. This is to prevent
-                    # Amazon from denying our website requests understanding that a script is 
+                    # Flipkart from denying our website requests understanding that a script is 
                     # requesting the webpage
                     user_agent = choice(user_agent_list)
                     
@@ -87,7 +87,7 @@ def main() :
         csvreader = csv.reader(file)
 
         # save entries as "title" (in quotes),"link" (in quotes),target (float type) 
-        # IMPORTANT : do not put spaces inside the quotes 
+        # IMPORTANT : do not put spaces in the beginning and end of the quotes 
         for row in csvreader :
             title = row[0]
             link = row[1]

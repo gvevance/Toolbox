@@ -92,7 +92,7 @@ def main() :
         csvreader = csv.reader(file)
 
         # save entries as "title" (in quotes),"link" (in quotes),target (float type) 
-        # IMPORTANT : do not put spaces inside the quotes 
+        # IMPORTANT : do not put spaces in the beginning and end of the quotes 
         for row in csvreader :
             
             title = row[0]
