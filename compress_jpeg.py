@@ -17,7 +17,8 @@ from PIL import UnidentifiedImageError
 def main():
     
     if len(sys.argv) != 3 :
-        print("Usage : python3 compress_jpeg.py <file> <compression percentage>")
+        filename = sys.argv[0].split("/")[-1]
+        print(f"Usage : python3 {filename} <file> <compression percentage>")
         exit()
     
     FILE = sys.argv[1]

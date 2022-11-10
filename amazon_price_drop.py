@@ -56,7 +56,7 @@ def check_price(link) :
                     # convert string to dictionary (json). This is because Amazon stores a dictionary
                     # stored as a string in the data of the class
                     # something like "{"priceAmount":1000.0, "currencySymbol":"$", ....}"
-                    # convert it to to json which returns a dictionary
+                    # convert it to to json which returns a dictionary after removing the 1st and last " characters 
                     details_dict = json.loads(tag.string[1:-1])      
                     
                     price = float(details_dict["priceAmount"])

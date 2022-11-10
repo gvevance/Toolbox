@@ -52,7 +52,7 @@ def check_price(link) :
                     # get the tag that has the price
                     tag = soup_data.find(class_="_30jeq3 _16Jk6d")
 
-                    # price string may have commas. Eg: 2,599. Remove that.
+                    # price string may have commas. Eg: "$2,599". Remove that.
                     # first character is the currency symbol. Remove that.
                     price = float(tag.string.replace(",","")[1:])
                     currency = tag.string[0]
