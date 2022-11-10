@@ -35,9 +35,9 @@ def main():
         print("ERROR : Invalid compression percent entered.")
         exit()
     
-    except Exception as e:
-        print(e)
-        exit()
+    # except Exception as e:
+    #     print(e)
+    #     exit()
 
     try :
         img = Image.open(FILE).rotate(180)
@@ -46,17 +46,22 @@ def main():
         print("Invalid image file entered. Exiting.")
         exit()
     
-    except Exception as err:
-        print(f"{type(err).__name__} was raised: {err}")
-        exit()
+    # except Exception as err:
+    #     print(f"{type(err).__name__} was raised: {err}")
+    #     exit()
 
+    # print file size
     file_stat = os.stat(FILE)
     print("Current file size is : ",file_stat.st_size>>10,"kB")
 
     _filename, _ = os.path.splitext(FILE)
     NEW_FILE = _filename + "_min.JPG"
+
+    # format = format you wanna save the compressed image as
+    # NEW_FILE = filename you wanna save the compressed image as 
     img.save(NEW_FILE,format="JPEG",optimize=True,quality=COMPRESS_TO)
 
+    # print new file size
     file_stat = os.stat(NEW_FILE)
     print("Compressed file size is : ",file_stat.st_size>>10,"kB")
 

@@ -7,7 +7,6 @@ link_targets_file = "filename_2.csv"
 
 import requests
 from bs4 import BeautifulSoup
-import json
 from time import sleep
 from random import choice
 from time import time
@@ -35,19 +34,30 @@ def check_price(link) :
             
                 with requests.session() as session :
 
+                    # choose a randome user agent from the list of user agents. This is to prevent
+                    # Amazon from denying our website requests understanding that a script is 
+                    # requesting the webpage
                     user_agent = choice(user_agent_list)
+                    
+                    # feed the chosen user agent into session headers
                     session.headers['user-agent'] = user_agent
+
+                    # get result of website link
                     res = session.get(link)
+
+                    # convert the result to a BeautifulSoup object. html parser should work. 
+                    # Else explore other options. Refer docs.
                     soup_data = BeautifulSoup(res.text, 'html.parser')
 
                     # get the tag that has the price
                     tag = soup_data.find(class_="_30jeq3 _16Jk6d")
 
+                    # price string may have commas. Eg: 2,599. Remove that.
+                    # first character is the currency symbol. Remove that.
                     price = float(tag.string.replace(",","")[1:])
                     currency = tag.string[0]
                     display_price = tag.string
                     
-                    # price,currency,display_price = 0,0,0
                     return price, currency, display_price
 
             except AttributeError :
@@ -67,12 +77,17 @@ def price_alert(price,target) :
 
 def main() :
 
+    # if the file with links and target prices does not exist in cwd, exit 
     if not os.path.exists(link_targets_file) :
         print(f"Error. {link_targets_file} does not exist.")
         exit()
-    
+
+    # open the file, load the csv
     with open(link_targets_file) as file :
         csvreader = csv.reader(file)
+
+        # save entries as "title" (in quotes),"link" (in quotes),target (float type) 
+        # IMPORTANT : do not put spaces inside the quotes 
         for row in csvreader :
             title = row[0]
             link = row[1]

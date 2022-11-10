@@ -13,9 +13,8 @@ from random import choice
 from time import time
 import os
 import csv
-# import sys
 
-
+# obtained a list of valid user agents for Python webscraping. Just google this.
 user_agent_list = [
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36' ,
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36' ,
@@ -32,18 +31,32 @@ def check_price(link) :
 
         if time() < timeout :
             try :
-            
+                
+                # open a session
                 with requests.session() as session :
-
+                    
+                    # choose a randome user agent from the list of user agents. This is to prevent
+                    # Amazon from denying our website requests understanding that a script is 
+                    # requesting the webpage
                     user_agent = choice(user_agent_list)
+                    
+                    # feed the chosen user agent into session headers
                     session.headers['user-agent'] = user_agent
+
+                    # get result of website link
                     res = session.get(link)
+
+                    # convert the result to a BeautifulSoup object. html parser should work. 
+                    # Else explore other options. Refer docs.
                     soup_data = BeautifulSoup(res.text, 'html.parser')
 
                     # get the tag that has the price
                     tag = soup_data.find(class_="a-section aok-hidden twister-plus-buying-options-price-data")
                     
-                    # convert string to dictionary (json)
+                    # convert string to dictionary (json). This is because Amazon stores a dictionary
+                    # stored as a string in the data of the class
+                    # something like "{"priceAmount":1000.0, "currencySymbol":"$", ....}"
+                    # convert it to to json which returns a dictionary
                     details_dict = json.loads(tag.string[1:-1])      
                     
                     price = float(details_dict["priceAmount"])
@@ -69,13 +82,19 @@ def price_alert(price,target) :
 
 def main() :
 
+    # if the file with links and target prices does not exist in cwd, exit 
     if not os.path.exists(link_targets_file) :
         print(f"Error. {link_targets_file} does not exist.")
         exit()
     
+    # open the file, load the csv
     with open(link_targets_file) as file :
         csvreader = csv.reader(file)
+
+        # save entries as "title" (in quotes),"link" (in quotes),target (float type) 
+        # IMPORTANT : do not put spaces inside the quotes 
         for row in csvreader :
+            
             title = row[0]
             link = row[1]
             target = float(row[2])
