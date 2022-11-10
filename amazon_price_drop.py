@@ -66,8 +66,8 @@ def check_price(link) :
                     return price, currency, display_price
 
             except AttributeError :
-                # print("Connection unsuccessful. Retrying")
-                sleep(0.1)
+                # Amazon detected the script and did not deliver the webpage
+                sleep(0.1)      # sleep before retrying in while loop
         
         else :
             print("Request timed out.")
