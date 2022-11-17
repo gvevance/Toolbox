@@ -3,7 +3,7 @@
 # Automate calling this script and send email to xyz to alert.
 # Can log it in a csv file
 
-link_targets_file = "filename_2.csv"
+link_targets_file = "flipkart.csv"
 
 import requests
 from bs4 import BeautifulSoup
@@ -34,7 +34,7 @@ def check_price(link) :
             
                 with requests.session() as session :
 
-                    # choose a randome user agent from the list of user agents. This is to prevent
+                    # choose a random user agent from the list of user agents. This is to prevent
                     # Flipkart from denying our website requests understanding that a script is 
                     # requesting the webpage
                     user_agent = choice(user_agent_list)
@@ -95,9 +95,9 @@ def main() :
             price,currency,display_price = check_price(link)
             buy = price_alert(price,target=target)
             if buy :
-                print(f"Price of {title} is {display_price}. Buy now.")
+                print(f"{title} : {display_price} < {currency}{target} .")
             else :
-                print(f"Price of {title} is {display_price}. Look for a better deal.")
+                print(f"{title} : {display_price} > {currency}{target} .")
 
 
 if __name__ == "__main__" :
